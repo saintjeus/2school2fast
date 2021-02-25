@@ -170,6 +170,33 @@ def most_water(lst):
 # Explanation: [1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1] Longest sublist is underlined and bolded numbers were flipped from 0 to 1.
 # lst = [0, 0, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1], k = 3 outputs 10.
 # Explanation: [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1] Longest sublist is underlined and bolded numbers were flipped from 0 to 1.
+def longest_consecutive_ones(lst,k):
+    max_longest = 0
+    longest = 0
+    index = 0
+    pointer = 0
+    n = k
+    while index < len(lst):
+        while pointer < len(lst):
+            if lst[pointer]==1:
+                longest += 1
+            if lst[pointer]==0 and n>0:
+                longest += 1
+                n -= 1
+            if n==0: #breaks prematurely?
+                max_longest = max(longest, max_longest)
+                print(f"index is {index} pointer is {pointer} longest is {longest} max_longest is {max_longest}")
+                break
+            max_longest = max(longest, max_longest)
+            pointer += 1
+        longest = 0
+        n = k
+        index += 1
+        pointer = index
+    return max_longest
+#print(longest_consecutive_ones([1,1,1,0,0,0,1,1,1,1,0], 2))
+#print(longest_consecutive_ones([0, 0, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1], 3))
+#print(longest_consecutive_ones([1,1,1,1,1], 5))
 
 # QUESTION 6
 # Given an NxN tic tac toe board with values ('', 'O', 'X'), 
@@ -197,18 +224,49 @@ def most_water(lst):
 # ] -> 0 (Game not over)
 def tic_tac_toe(board):
     n = len(board)
-    curr_player = ''
+    row_check = 0
+    column_check = 0
+    diag1_check = 0
+    vertical = ''
+    horizontal = ''
+    diagonal1 = '' #top-left to bottom-right
+    diagonal2 = ''
     for i in range(n):
         for j in range(n):
-            if j == 0:
-                curr_player = board[i][j]
-            elif board[i][j] == curr_player:
-                skip
-            elif j==n:
-                if curr_player == 'X':
-                    return 1 # X wins
-                if curr_player == 'O':
-                    return 2 # O wins
-            # board[i][j] goes by row
-            
-tic_tac_toe([['X', 'X', 'X'],['O', 'O', 'X'],['O', 'X', 'O']])
+            if board[i][j] == '': #check every char for empty
+                return 0 #game not over
+            if j==0 and i ==0: #initialize diagonal1 check
+                diagonal1 = board[i][j]
+            if j == 0: #initialize vertical and horizontal char check
+                vertical = board[i][j]
+                horizontal = board[j][i]
+            if board[i][j] == horizontal: #check every row along j
+                row_check += 1
+            if board[j][i] == vertical: #check every column along i
+                column_check += 1
+            if j==i and board[i][j]==diagonal1: #check every diagonal1
+                diag1_check += 1
+            # if j==n:
+            #     if row_check == n:
+            #         return (win_check(horizontal))
+            #     if column_check == n:
+            #         return (win_check(vertical))
+            #     if j == i: #if i = j = n(size of board)
+            #         return (win_check(diagonal1))
+            print(f"n = {n} row_check = {row_check} column_check = {column_check} vertical = {vertical} horizontal = {horizontal}")
+        #reset counters
+        if row_check == n:
+            return (win_check(horizontal))
+        if column_check == n:
+            return (win_check(vertical))
+        if i == n and j == n: #if i = j = n(size of board)
+            return (win_check(diagonal1))
+        row_check = 0
+        column_check = 0
+    return 3 #no winner
+def win_check(c):
+    if c == 'X':
+        return 1 #X wins
+    if c == 'O':
+        return 2 #O wins
+# print(tic_tac_toe([['X', 'O', 'X'],['O', 'X', 'O'],['O', 'O', 'O']]))
